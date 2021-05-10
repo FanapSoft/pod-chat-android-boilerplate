@@ -1,14 +1,11 @@
 package fanap.pod.chat.boilerplateapp.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.fanap.podchat.chat.assistant.model.AssistantVo
 import com.fanap.podchat.model.ChatResponse
 import fanap.pod.chat.boilerplateapp.App
 import fanap.pod.chat.boilerplateapp.R
-import fanap.pod.chat.boilerplateapp.data.AppDataManager
-import fanap.pod.chat.boilerplateapp.data.chat.ChatCallBackHelper
 import fanap.pod.chat.boilerplateapp.ui.base.BaseActivity
 
 class MainActivity : BaseActivity() {
