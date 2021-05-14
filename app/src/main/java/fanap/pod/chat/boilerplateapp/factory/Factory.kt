@@ -1,25 +1,28 @@
-package fanap.pod.chat.boilerplateapp.di
+package fanap.pod.chat.boilerplateapp.factory
 
 import android.content.Context
 import com.fanap.podchat.chat.Chat
+import fanap.pod.chat.boilerplateapp.App
 import fanap.pod.chat.boilerplateapp.data.AppDataManager
 import fanap.pod.chat.boilerplateapp.data.chat.AppChatHelper
 import fanap.pod.chat.boilerplateapp.data.prefs.AppPreferencesHelper
 import fanap.pod.chat.boilerplateapp.data.remote.AppApiHelper
 
-class Factory() {
+class Factory {
     private var api: AppApiHelper? = null
     private var prefs: AppPreferencesHelper? = null
     private var chatHelper: AppChatHelper? = null
     private var dataManager: AppDataManager? = null
 
-    fun getAppDataManager(context: Context): AppDataManager {
+    fun getAppDataManager(): AppDataManager {
         if (dataManager == null)
-            dataManager = AppDataManager(
-                prepareApiHelper(),
-                prepareAppPreferencesHelper(),
-                prepareAppChatHelper(context)
-            )
+            dataManager = App.getInstance()?.applicationContext?.let { prepareAppChatHelper(it) }?.let {
+                AppDataManager(
+                    prepareApiHelper(),
+                    prepareAppPreferencesHelper(),
+                    it
+                )
+            }
         return dataManager as AppDataManager
     }
 
@@ -31,13 +34,13 @@ class Factory() {
 
     private fun prepareAppPreferencesHelper(): AppPreferencesHelper {
         if (prefs == null)
-            prefs = AppPreferencesHelper()
+            prefs = App.getInstance()?.applicationContext?.let { AppPreferencesHelper(it,"mypref") }
         return prefs as AppPreferencesHelper
     }
 
     private fun prepareAppChatHelper(context: Context): AppChatHelper {
         if (chatHelper == null)
-            chatHelper = AppChatHelper(Chat.init(context));
+            chatHelper = AppChatHelper(Chat.init(context))
         return chatHelper as AppChatHelper
     }
 

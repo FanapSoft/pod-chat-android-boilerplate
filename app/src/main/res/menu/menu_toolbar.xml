@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/itemSandBoxServer"
+        android:title="Main Server" />
+    <item
+        android:id="@+id/itemMainServer"
+        android:title="SandBox Server" />
+    <item
+        android:id="@+id/itemLogout"
+        android:title="LogOut" />
+</menu>

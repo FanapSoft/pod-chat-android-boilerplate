@@ -18,6 +18,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "https://s3.amazonaws.com/repo.commonsware.com" }
         maven {
             name = "pod-chat-android-sdk"
             url = uri("https://maven.pkg.github.com/FanapSoft/pod-chat-android-sdk")

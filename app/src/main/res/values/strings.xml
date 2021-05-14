@@ -1,3 +1,27 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Boilerplate App</string>
+
+    <string name="podspace_base_url">"https://podspace.pod.ir/api/oauth2/"</string>
+    <string name="handshake">HandShake</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_phone_number">Not a valid phone number</string>
+    <string name="invalid_verify">verify code must be >3 digits</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="login_success">"Login success"</string>
+    <string name="verify_sent">"Message Sent"</string>
+    <string name="verify_dontsent">"Message Dont Sent"</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <string name="register">REGISTER</string>
+    <string name="login_phonenumber_hint">PhoneNumber</string>
+    <string name="login_verify_hint">VerifyCode</string>
+    <string name="signup_login_hint">Already have an account? Sign In</string>
+    <string name="login_signup_hint">Don\'t have an account? Sign Up</string>
+    <string name="login_name_hint">Name</string>
+    <string name="login_mobile_number_hint">Mobile Number</string>
 </resources>

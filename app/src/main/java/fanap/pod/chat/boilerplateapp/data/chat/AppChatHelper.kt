@@ -15,7 +15,7 @@ class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter() {
 
     override fun connectChat() {
         chat.setListener(this);
-        chat.connect(null)
+      //  chat.connect(null)
     }
 
     override fun destroy() {
@@ -35,5 +35,8 @@ class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter() {
 
     private fun clone() {
         listeners.clear()
+        chat.closeChat()
+        chat.killChat()
+
     }
 }
