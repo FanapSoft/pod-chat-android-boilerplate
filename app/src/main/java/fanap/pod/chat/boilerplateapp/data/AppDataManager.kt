@@ -1,5 +1,7 @@
 package fanap.pod.chat.boilerplateapp.data
 
+import com.fanap.podchat.requestobject.RequestConnect
+import com.fanap.podchat.requestobject.RequestThread
 import fanap.pod.chat.boilerplateapp.data.chat.AppChatHelper
 import fanap.pod.chat.boilerplateapp.data.chat.ChatCallBackHelper
 import fanap.pod.chat.boilerplateapp.data.prefs.AppPreferencesHelper
@@ -64,12 +66,19 @@ class AppDataManager(
         return api.refreshToken(refreshToken)
     }
 
-    override fun connectChat() {
-        chatHelper.connectChat()
+    override fun connectChat(request : RequestConnect) {
+        chatHelper.connectChat(request)
+    }
+
+    override fun getThread(requestThread: RequestThread) {
+        chatHelper.getThread(requestThread)
     }
 
     override fun destroy() {
         chatHelper.destroy()
     }
 
+    override fun setToken(token: String) {
+        chatHelper.setToken(token)
+    }
 }

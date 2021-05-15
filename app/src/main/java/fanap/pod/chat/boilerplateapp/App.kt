@@ -11,9 +11,9 @@ class App : MultiDexApplication() {
 
     companion object {
         var factory: Factory = Factory()
-        private var instance: App? = null
+        private lateinit var  instance: App
         var deviceId :String? = null
-        fun getInstance(): App? {
+        fun getInstance(): App {
             return instance
         }
     }
