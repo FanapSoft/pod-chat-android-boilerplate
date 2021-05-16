@@ -41,10 +41,6 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
         listener = mListener
     }
 
-    override fun onAssistantBlocked(response: ChatResponse<MutableList<AssistantVo>>?) {
-        super.onAssistantBlocked(response)
-        listener?.onAssistantBlocked(response)
-    }
 
     override fun connect(
         socketAddress: String,

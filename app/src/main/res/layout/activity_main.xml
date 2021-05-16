@@ -4,30 +4,47 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:theme="@style/Theme.Design.NoActionBar">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainerView"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:defaultNavHost="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appbar"
+            app:navGraph="@navigation/mainnavigation" />
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/topToolbar"
-            android:background="@color/purple_200"
-            app:navigationIcon="@drawable/ic_baseline_menu_24"
-            app:titleTextColor="@android:color/white"
-            app:title="@string/app_name"
-            app:menu="@menu/menu_toolbar"
-            app:layout_scrollFlags="scroll|enterAlways" />
+            android:orientation="vertical"
+            android:theme="@style/Theme.Design.NoActionBar"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/topToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/purple_200"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:menu="@menu/menu_toolbar"
+                app:navigationIcon="@drawable/ic_baseline_menu_24"
+                app:title="@string/app_name"
+                app:titleTextColor="@android:color/white" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/login_bk"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        </com.google.android.material.appbar.AppBarLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <!--    app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

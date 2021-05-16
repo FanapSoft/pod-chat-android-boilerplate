@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity(), MainViewListener {
                     chatReady = true
                     toolbar.setTitle("connected")
                     getThread()
-                }else{
+                } else {
                     toolbar.setTitle("connecting ...")
                 }
             }
@@ -120,6 +120,9 @@ class MainActivity : AppCompatActivity(), MainViewListener {
         if (requestCode == LAUNCH_LOGIN_ACTIVITY)
             if (resultCode == Activity.RESULT_CANCELED)
                 finish()
+            else
+                mainViewModel.checkRefreshToken()
+
     }
 
     override fun onDestroy() {
@@ -138,10 +141,10 @@ class MainActivity : AppCompatActivity(), MainViewListener {
         connect()
     }
 
-   private fun getThread() {
-       val requestThread = RequestThread
-           .Builder()
-           .build()
+    private fun getThread() {
+        val requestThread = RequestThread
+            .Builder()
+            .build()
         mainViewModel.getThread(requestThread)
     }
 

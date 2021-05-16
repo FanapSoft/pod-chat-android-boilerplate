@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainnavigation"
-    app:startDestination="@id/loginActivity">
+    app:startDestination="@id/threadsFragment">
 
     <activity
         android:id="@+id/loginActivity"
@@ -15,4 +15,9 @@
         android:name="fanap.pod.chat.boilerplateapp.ui.main.MainActivity"
         android:label="activity_main"
         tools:layout="@layout/activity_main" />
+    <fragment
+        android:id="@+id/threadsFragment"
+        android:name="fanap.pod.chat.boilerplateapp.ui.threads.threadsFragment"
+        android:label="fragment_threads_item"
+        tools:layout="@layout/fragment_threads_item" />
 </navigation>

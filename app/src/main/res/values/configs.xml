@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--    main-->
+    <string name="main_server_name">MainServer</string>
+    <string name="socketAddress">wss://msg.pod.ir/ws</string>
+    <string name="serverName">chat-server</string>
+    <string name="appId">POD-Chat</string>
+    <string name="ssoHost">https://accounts.pod.ir/</string>
+    <string name="platformHost">https://api.pod.ir/srv/core/</string>
+    <string name="fileServer">https://core.pod.ir/</string>
+
+    <!--    sandbox-->
+    <string name="sandbox_server_name">SandBox</string>
+    <string name="sandbox_socketAddress">wss://chat-sandbox.pod.ir/ws</string>
+    <string name="sandbox_serverName">chat-server</string>
+    <string name="sandbox_appId">POD-Chat</string>
+    <string name="sandbox_ssoHost">https://accounts.pod.ir/</string>
+    <string name="sandbox_platformHost">https://sandbox.pod.ir:8043/srv/basic-platform/</string>
+    <string name="sandbox_fileServer">https://sandbox.pod.ir:8443/</string>
+
+    <!--podspace-->
+    <string name="podspace_base_url">"https://podspace.pod.ir/nzh/drive/oauth2/"</string>
+    <string name="podspace_file_server">"http://172.16.110.61:8780/podspace/"</string>
+    <string name="podspace_file_server_main">"https://podspace.pod.ir/"</string>
+
+</resources>
