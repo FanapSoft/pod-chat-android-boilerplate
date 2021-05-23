@@ -96,6 +96,7 @@ class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter(),Chat.IClearMessage
                 i.onCreateThread(response)
     }
 
+
     override fun onGetThreadParticipant(outPutParticipant: ChatResponse<ResultParticipant>?) {
         super.onGetThreadParticipant(outPutParticipant)
         if(!listeners.isEmpty())
