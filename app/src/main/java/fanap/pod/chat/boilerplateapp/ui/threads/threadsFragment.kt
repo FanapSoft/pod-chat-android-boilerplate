@@ -1,34 +1,38 @@
 package fanap.pod.chat.boilerplateapp.ui.threads
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.fanap.podchat.requestobject.RequestThread
 import fanap.pod.chat.boilerplateapp.R
 import fanap.pod.chat.boilerplateapp.factory.ViewModelFactory
 import fanap.pod.chat.boilerplateapp.ui.main.MainViewListener
 import fanap.pod.chat.boilerplateapp.ui.main.MainViewModel
-import fanap.pod.chat.boilerplateapp.ui.threads.placeholder.PlaceholderContent
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
+import java.util.*
 
 /**
  * A fragment representing a list of Items.
  */
 class threadsFragment : Fragment(), MainViewListener {
 
+    private lateinit var loading: ProgressBar
+    private lateinit var recyclerView: RecyclerView
     private var columnCount = 1
     private lateinit var mainViewModel: MainViewModel
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private var mAdapter: ThreadItemRecyclerViewAdapter = ThreadItemRecyclerViewAdapter(
+        ArrayList()
+    )
 
-        arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-        }
-    }
+    private var chatReady: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,37 +40,55 @@ class threadsFragment : Fragment(), MainViewListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_threads_item, container, false)
 
-        // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
-                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
-                adapter = ThreadItemRecyclerViewAdapter(PlaceholderContent.ITEMS)
-            }
-        }
+        loading = view.findViewById<ProgressBar>(R.id.loading)
+        recyclerView = view.findViewById<RecyclerView>(R.id.list)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = mAdapter
+
+        setup()
         return view
     }
 
-    companion object {
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
 
-        @JvmStatic
-        fun newInstance(columnCount: Int) =
-            threadsFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                }
-            }
-    }
-
-
-    fun setup(){
+    fun setup() {
+        loading.visibility = View.VISIBLE
         mainViewModel = ViewModelProvider(this, ViewModelFactory())
             .get(MainViewModel::class.java)
         mainViewModel.setViewModelListener(this)
+        getThread()
+        mainViewModel.observable
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError { Log.d("CHAT_TEST_UI", "UI ERROR") }
+            .subscribe {
+                if (it == "CHAT_READY") {
+                    chatReady = true
+                    getThread()
+                } else {
+
+                }
+            }
+
+        mainViewModel.threadsObservable
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError { Log.d("CHAT_TEST_UI", "UI ERROR") }
+            .subscribe {
+                loading.visibility = View.INVISIBLE
+                if (it.size > 0) {
+                    mAdapter.updateList(it)
+                }
+            }
+
+    }
+
+
+    private fun getThread() {
+        val requestThread = RequestThread
+            .Builder()
+            .count(10)
+            .build()
+        mainViewModel.getThread(requestThread)
     }
 
     override fun connectWithOTP(token: String) {

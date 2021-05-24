@@ -89,7 +89,6 @@ class MainActivity : AppCompatActivity(), MainViewListener {
                 if (it == "CHAT_READY") {
                     chatReady = true
                     toolbar.setTitle("connected")
-                    getThread()
                 } else {
                     toolbar.setTitle("connecting ...")
                 }
@@ -141,12 +140,6 @@ class MainActivity : AppCompatActivity(), MainViewListener {
         connect()
     }
 
-    private fun getThread() {
-        val requestThread = RequestThread
-            .Builder()
-            .build()
-        mainViewModel.getThread(requestThread)
-    }
 
     fun connect() {
         if (mainServer) {

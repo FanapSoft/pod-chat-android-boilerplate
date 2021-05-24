@@ -74,6 +74,10 @@ class AppDataManager(
         chatHelper.getThread(requestThread)
     }
 
+    override fun clearCache() {
+        chatHelper.clearCache()
+    }
+
     override fun destroy() {
         chatHelper.destroy()
     }

@@ -1,18 +1,16 @@
 package fanap.pod.chat.boilerplateapp.data.chat
 
-import android.util.Log
+
 import com.fanap.podchat.chat.Chat
 import com.fanap.podchat.chat.ChatAdapter
-import com.fanap.podchat.chat.assistant.model.AssistantVo
 import com.fanap.podchat.chat.thread.public_thread.ResultJoinPublicThread
 import com.fanap.podchat.model.*
 import com.fanap.podchat.requestobject.RequestConnect
 import com.fanap.podchat.requestobject.RequestThread
 import com.fanap.podchat.util.NetworkUtils.NetworkPingSender
-import rx.exceptions.MissingBackpressureException
-import rx.exceptions.OnErrorNotImplementedException
 
-class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter() {
+
+class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter(),Chat.IClearMessageCache {
 
     init {
         val networkStateConfig = NetworkPingSender.NetworkStateConfig()
@@ -28,6 +26,8 @@ class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter() {
         chat.isLoggable(true)
 
         chat.isSentryLogActive(true)
+
+        chat.isCacheables(true)
 
         chat.isSentryResponseLogActive(true)
 
@@ -46,6 +46,10 @@ class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter() {
 
     override fun getThread(requestThread: RequestThread) {
         chat.getThreads(requestThread,null)
+    }
+
+    override fun clearCache() {
+        chat.clearCacheDatabase(this)
     }
 
     override fun destroy() {
@@ -151,5 +155,13 @@ class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter() {
         listeners.clear()
         chat.closeChat()
         chat.killChat()
+    }
+
+    override fun onCacheDatabaseCleared() {
+
+    }
+
+    override fun onExceptionOccurred(cause: String?) {
+
     }
 }

@@ -1,18 +1,20 @@
 package fanap.pod.chat.boilerplateapp.ui.threads
 
-import androidx.recyclerview.widget.RecyclerView
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.fanap.podchat.mainmodel.Thread
 import fanap.pod.chat.boilerplateapp.databinding.FragmentThreadsBinding
-import fanap.pod.chat.boilerplateapp.ui.threads.placeholder.PlaceholderContent.PlaceholderItem
+
 
 /**
  * [RecyclerView.Adapter] that can display a [PlaceholderItem].
  * TODO: Replace the implementation with code for your data type.
  */
 class ThreadItemRecyclerViewAdapter(
-    private val values: List<PlaceholderItem>
+    private var values: List<Thread>
 ) : RecyclerView.Adapter<ThreadItemRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,10 +29,21 @@ class ThreadItemRecyclerViewAdapter(
 
     }
 
+    fun updateList(values: List<Thread>) {
+        this.values = values
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
-        holder.idView.text = item.id
-        holder.contentView.text = item.content
+        if (item.lastMessage != null) {
+            if (item.lastMessage?.length!! > 20)
+                holder.idView.text = item.lastMessage.subSequence(0, 20).toString() + " ... "
+            else
+                holder.idView.text = item.lastMessage
+        }
+        holder.contentView.text = item.title
     }
 
     override fun getItemCount(): Int = values.size
@@ -46,3 +59,4 @@ class ThreadItemRecyclerViewAdapter(
     }
 
 }
+

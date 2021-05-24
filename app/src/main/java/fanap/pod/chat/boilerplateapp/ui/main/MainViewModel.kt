@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.fanap.podchat.chat.assistant.model.AssistantVo
 import com.fanap.podchat.model.ChatResponse
 import com.fanap.podchat.model.ErrorOutPut
 import com.fanap.podchat.model.ResultThreads
@@ -19,6 +18,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import rx.exceptions.MissingBackpressureException
 import rx.exceptions.OnErrorNotImplementedException
+import com.fanap.podchat.mainmodel.Thread
 import rx.subjects.PublishSubject
 
 class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
@@ -27,6 +27,7 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
     private var listener: MainViewListener? = null
     private var mCompositeDisposable: CompositeDisposable? = null
     private var chatState: String? = ""
+    var threadsObservable: PublishSubject<List<Thread>> = PublishSubject.create()
     var observable: PublishSubject<String> = PublishSubject.create()
     private val _loginState = MutableLiveData<Boolean>()
     val loginState: LiveData<Boolean> = _loginState
@@ -109,6 +110,7 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
 
     override fun onGetThread(content: String?, thread: ChatResponse<ResultThreads>?) {
         super.onGetThread(content, thread)
+        threadsObservable.onNext(thread?.result?.threads)
     }
 
     override fun onError(content: String?, error: ErrorOutPut?) {
@@ -143,6 +145,7 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
     override fun logOut() {
         dataManager.saveRefreshToken(null)
         dataManager.changeLoginState(false)
+        dataManager.clearCache()
         setLogin(false)
     }
 

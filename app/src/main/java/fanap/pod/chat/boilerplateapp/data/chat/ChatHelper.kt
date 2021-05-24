@@ -8,6 +8,7 @@ import com.fanap.podchat.requestobject.RequestThread
 interface ChatHelper {
     fun connectChat(request : RequestConnect)
     fun getThread(requestThread: RequestThread)
+    fun clearCache()
 
     fun destroy()
     fun setToken(token : String)
