@@ -14,13 +14,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputLayout
 import fanap.pod.chat.boilerplateapp.databinding.ActivityLoginBinding
 import fanap.pod.chat.boilerplateapp.factory.ViewModelFactory
+import fanap.pod.chat.boilerplateapp.utils.Utility
+import fanap.pod.chat.boilerplateapp.utils.Utility.showProgressBar
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
 
-    private lateinit var loading:ProgressBar
     private lateinit var login : Button
     private lateinit var verify  : Button
     private lateinit var editTextPhone :EditText
@@ -32,7 +33,6 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        loading = binding.loading
         login = binding.cirLoginButton
         verify = binding.cirVerifyButton
         editTextPhone = binding.editTextPhone
@@ -64,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
 
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
-            loading.visibility = View.GONE
+            Utility.hideProgressBar()
 
             if (loginResult.success) {
                 when (loginResult.state) {
@@ -109,7 +109,7 @@ class LoginActivity : AppCompatActivity() {
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
-                        loading.visibility = View.VISIBLE
+                      context.showProgressBar()
                         loginViewModel.verifyNumber(
                             editTextVerify.text.toString()
                         )
@@ -119,14 +119,14 @@ class LoginActivity : AppCompatActivity() {
             }
 
             login.setOnClickListener {
-                loading.visibility = View.VISIBLE
+                context.showProgressBar()
                 loginViewModel.handshake(
                     editTextPhone.text.toString()
                 )
             }
 
             verify.setOnClickListener {
-                loading.visibility = View.VISIBLE
+                context.showProgressBar()
                 loginViewModel.verifyNumber(
                     editTextVerify.text.toString()
                 )

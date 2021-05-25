@@ -23,12 +23,19 @@ import rx.subjects.PublishSubject
 
 class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
 
+    // all logic app is in AppDataManager
     private var dataManager: AppDataManager = App.factory.getAppDataManager()
     private var listener: MainViewListener? = null
     private var mCompositeDisposable: CompositeDisposable? = null
     private var chatState: String? = ""
     var threadsObservable: PublishSubject<List<Thread>> = PublishSubject.create()
     var observable: PublishSubject<String> = PublishSubject.create()
+
+    /*
+       *     this method for logout acknowledge to views
+       *     after logout user should be clear all list and ...
+       * */
+    var logoutObservable: PublishSubject<Boolean> = PublishSubject.create()
     private val _loginState = MutableLiveData<Boolean>()
     val loginState: LiveData<Boolean> = _loginState
 
@@ -71,11 +78,14 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
         dataManager.getThread(requestThread)
     }
 
+    //when user leaved the app.
+    //we should be clear all data and destroy all abservables
     override fun close() {
         dataManager.destroy()
         mCompositeDisposable?.dispose()
     }
 
+    //check login state if the user logined already we should connect to chat server
     override fun checkLogin() {
         if (dataManager.getLoginState()) {
             setLogin(true)
@@ -83,6 +93,7 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
             setLogin(false)
     }
 
+    // if user is login we lets go to connect to chat
     override fun checkRefreshToken() {
         if (dataManager.getRefreshToken() != null) {
             refreshToken(dataManager.getRefreshToken()!!)
@@ -90,6 +101,9 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
             setLogin(false)
     }
 
+
+    //this method observe to changes in chat state
+    //and then send state to view
     override fun onChatState(state: String?) {
         super.onChatState(state)
 
@@ -108,19 +122,25 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
 
     }
 
+    var lastId: Long = -1
     override fun onGetThread(content: String?, thread: ChatResponse<ResultThreads>?) {
         super.onGetThread(content, thread)
-        threadsObservable.onNext(thread?.result?.threads)
+        if (lastId != thread?.result?.threads?.get(0)?.id) {
+            lastId = thread?.result?.threads?.get(0)?.id!!
+            threadsObservable.onNext(thread?.result?.threads)
+        }
     }
 
     override fun onError(content: String?, error: ErrorOutPut?) {
         super.onError(content, error)
-        Log.e("TAG", "onError: "+error?.errorCode )
+        Log.e("TAG", "onError: " + error?.errorCode)
         if (error!!.errorCode == 21L) {
             checkRefreshToken()
         }
     }
 
+
+    //refresh token implementation
     fun refreshToken(refreshToken: String) {
         mCompositeDisposable?.add(dataManager.refreshToken(refreshToken)
             .subscribeOn(Schedulers.io())
@@ -134,6 +154,8 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
             })
     }
 
+    //after arrived aouth tokens
+    //we save tokens in our local storage and then connect to chat server
     private fun handleTokenReceived(token: String) {
         if (chatState!! == ChatStateType.ChatSateConstant.ASYNC_READY) {
             dataManager.setToken(token)
@@ -146,6 +168,7 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
         dataManager.saveRefreshToken(null)
         dataManager.changeLoginState(false)
         dataManager.clearCache()
+        logoutObservable.onNext(true)
         setLogin(false)
     }
 

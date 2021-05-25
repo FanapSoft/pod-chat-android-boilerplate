@@ -1,6 +1,7 @@
 package fanap.pod.chat.boilerplateapp.data.chat
 
 
+import android.util.Log
 import com.fanap.podchat.chat.Chat
 import com.fanap.podchat.chat.ChatAdapter
 import com.fanap.podchat.chat.thread.public_thread.ResultJoinPublicThread
@@ -156,13 +157,14 @@ class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter(),Chat.IClearMessage
         listeners.clear()
         chat.closeChat()
         chat.killChat()
+
     }
 
     override fun onCacheDatabaseCleared() {
-
+        Log.e("TAG", "onCacheDatabaseCleared: " )
     }
 
     override fun onExceptionOccurred(cause: String?) {
-
+        Log.e("TAG", "onExceptionOccurred: ")
     }
 }

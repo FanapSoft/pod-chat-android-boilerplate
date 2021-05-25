@@ -1,6 +1,9 @@
 package fanap.pod.chat.boilerplateapp.ui.threads
 
 import android.annotation.SuppressLint
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -14,7 +17,8 @@ import fanap.pod.chat.boilerplateapp.databinding.FragmentThreadsBinding
  * TODO: Replace the implementation with code for your data type.
  */
 class ThreadItemRecyclerViewAdapter(
-    private var values: List<Thread>
+    private var values: MutableList<Thread>
+
 ) : RecyclerView.Adapter<ThreadItemRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,10 +33,16 @@ class ThreadItemRecyclerViewAdapter(
 
     }
 
-    fun updateList(values: List<Thread>) {
-        this.values = values
-        notifyDataSetChanged()
+
+    fun updateList(values: MutableList<Thread>) {
+        this.values.addAll(values)
+        notifyItemRangeChanged(this.values.size - values.size, values.size)
     }
+
+    fun clearList() {
+        this.values.clear()
+    }
+
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

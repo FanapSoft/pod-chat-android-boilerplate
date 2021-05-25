@@ -17,7 +17,7 @@
         tools:layout="@layout/activity_main" />
     <fragment
         android:id="@+id/threadsFragment"
-        android:name="fanap.pod.chat.boilerplateapp.ui.threads.threadsFragment"
+        android:name="fanap.pod.chat.boilerplateapp.ui.threads.ThreadsFragment"
         android:label="fragment_threads_item"
         tools:layout="@layout/fragment_threads_item" />
 </navigation>

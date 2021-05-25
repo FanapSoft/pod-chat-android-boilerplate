@@ -7,7 +7,7 @@ import com.fanap.podchat.requestobject.RequestThread
 
 interface MainViewListener:ChatListener
 {
-    fun connectWithOTP(token: String)
+    fun connectWithOTP(token: String){}
 }
 interface ViewModelAdapter{
     fun connect( socketAddress: String,
