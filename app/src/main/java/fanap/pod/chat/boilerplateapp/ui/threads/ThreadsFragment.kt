@@ -39,7 +39,7 @@ class ThreadsFragment : Fragment() {
     //pagination configs
     private var isLoading = false
     private var offset: Long = 0
-    private var count: Long = 50
+    private var count: Long = 8
 
     //adapter for show threads
     private var mAdapter: ThreadItemRecyclerViewAdapter = ThreadItemRecyclerViewAdapter(
@@ -84,7 +84,7 @@ class ThreadsFragment : Fragment() {
 
         if (!isLoading) {
             if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                offset += 50
+                offset += 8
                 handler.sendMessage(Message())
                 Log.e("TAG", "checkLoadMore: ")
             }
@@ -116,7 +116,7 @@ class ThreadsFragment : Fragment() {
             .subscribe {
                 if (it == "CHAT_READY") {
                     chatReady = true
-                    getThread()
+                    //getThread()
                 }
             }
         mainViewModel.logoutObservable
@@ -134,22 +134,31 @@ class ThreadsFragment : Fragment() {
             .doOnError { Log.d("CHAT_TEST_UI", "UI ERROR") }
             .subscribe {
                 Utility.hideProgressBar()
-                if (it.isNotEmpty()) {
-                    mAdapter.updateList(it as MutableList<Thread>)
+                if (it.isNotEmpty()&&isLoadingg) {
+                    isLoadingg = false
+                    Log.e("testtag", "add item in adapter" )
+                    view?.post { // Notify adapter with appropriate notify methods
+                        mAdapter.updateList(it as MutableList<Thread>)
+                    }
+
                 }
             }
     }
-
+   var isLoadingg = false
     //prepare getThread request and send it to chat server for update threads
     //call backs in mainViewModel.threadsObservable
     private fun getThread() {
 //        addTread()
-        val requestThread = RequestThread
-            .Builder()
-            .offset(offset + 1)
-            .count(count)
-            .build()
-        mainViewModel.getThread(requestThread)
+        if (!isLoadingg) {
+            isLoadingg = true
+            val requestThread = RequestThread
+                .Builder()
+                .offset(offset + 1)
+                .count(count)
+                .build()
+            mainViewModel.getThread(requestThread)
+            Log.e("TAG", offset.toString() + " ")
+        }
 
 
     }

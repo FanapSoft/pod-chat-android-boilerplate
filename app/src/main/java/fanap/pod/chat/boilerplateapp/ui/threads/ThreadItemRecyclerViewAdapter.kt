@@ -36,7 +36,8 @@ class ThreadItemRecyclerViewAdapter(
 
     fun updateList(values: MutableList<Thread>) {
         this.values.addAll(values)
-        notifyItemRangeChanged(this.values.size - values.size, values.size)
+//        notifyDataSetChanged()
+        notifyItemRangeInserted(this.values.size - values.size, values.size)
     }
 
     fun clearList() {
