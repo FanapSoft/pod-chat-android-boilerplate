@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity(), MainViewListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mainViewModel: MainViewModel
     private lateinit var toolbar: Toolbar
-    private var mainServer = false
+    private var mainServer = true
     private var chatReady: Boolean = false
     private val ssoHost = App.getInstance().getString(R.string.sandbox_ssoHost)
     private val serverName = "chat-server"

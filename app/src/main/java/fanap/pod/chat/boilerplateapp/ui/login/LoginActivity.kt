@@ -65,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
             Utility.hideProgressBar()
-
+            Utility.hideProgressBar()
             if (loginResult.success) {
                 when (loginResult.state) {
                     0 -> {
