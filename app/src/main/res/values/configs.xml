@@ -22,6 +22,7 @@
     <!--podspace-->
     <string name="podspace_base_url">"https://podspace.pod.ir/nzh/drive/oauth2/"</string>
     <string name="podspace_file_server">"http://172.16.110.61:8780/podspace/"</string>
+<!--    <string name="podspace_file_server">"http://172.16.110.61:8780/podspace/"</string>-->
     <string name="podspace_file_server_main">"https://podspace.pod.ir/"</string>
 
 </resources>

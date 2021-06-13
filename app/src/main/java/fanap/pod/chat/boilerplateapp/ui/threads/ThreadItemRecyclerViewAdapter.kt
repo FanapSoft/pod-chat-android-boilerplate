@@ -1,15 +1,18 @@
 package fanap.pod.chat.boilerplateapp.ui.threads
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
-import android.os.Message
+import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.fanap.podchat.mainmodel.Thread
+import com.squareup.picasso.Picasso
+import fanap.pod.chat.boilerplateapp.R
 import fanap.pod.chat.boilerplateapp.databinding.FragmentThreadsBinding
+import java.lang.Exception as Exception1
 
 
 /**
@@ -20,6 +23,8 @@ class ThreadItemRecyclerViewAdapter(
     private var values: MutableList<Thread>
 
 ) : RecyclerView.Adapter<ThreadItemRecyclerViewAdapter.ViewHolder>() {
+
+    var listener: AdapterCallBack? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -33,7 +38,7 @@ class ThreadItemRecyclerViewAdapter(
 
     }
 
-
+    var mContext: Context? = null
     fun updateList(values: MutableList<Thread>) {
         this.values.addAll(values)
 //        notifyDataSetChanged()
@@ -56,6 +61,19 @@ class ThreadItemRecyclerViewAdapter(
                 holder.idView.text = item.lastMessage
         }
         holder.contentView.text = item.title
+
+        if (item.image != null) {
+            Picasso.get()
+                .load(item.image)
+                .placeholder(R.drawable.app_icon)
+                .error(R.drawable.app_icon)
+                .into(holder.imageProfile)
+        }
+
+        holder.contentView.setOnClickListener {
+            listener!!.onItemClick(item)
+        }
+
     }
 
     override fun getItemCount(): Int = values.size
@@ -64,11 +82,16 @@ class ThreadItemRecyclerViewAdapter(
         RecyclerView.ViewHolder(binding.root) {
         val idView: TextView = binding.itemNumber
         val contentView: TextView = binding.content
+        val imageProfile: ImageView = binding.imgProfile
 
         override fun toString(): String {
             return super.toString() + " '" + contentView.text + "'"
         }
     }
 
+}
+
+interface AdapterCallBack {
+    fun onItemClick(thread: Thread)
 }
 

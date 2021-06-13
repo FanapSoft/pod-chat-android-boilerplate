@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fanap.podchat.mainmodel.Thread
@@ -39,7 +40,7 @@ class ThreadsFragment : Fragment() {
     //pagination configs
     private var isLoading = false
     private var offset: Long = 0
-    private var count: Long = 15
+    private var count: Long = 10
 
     //adapter for show threads
     private var mAdapter: ThreadItemRecyclerViewAdapter = ThreadItemRecyclerViewAdapter(
@@ -48,7 +49,7 @@ class ThreadsFragment : Fragment() {
 
     //state of chat connection
     private var chatReady: Boolean = false
-
+    private var isFirst = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -84,7 +85,7 @@ class ThreadsFragment : Fragment() {
 
         if (!isLoading) {
             if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                offset += 15
+                offset += 10
                 handler.sendMessage(Message())
                 Log.e("TAG", "checkLoadMore: ")
             }
@@ -105,7 +106,16 @@ class ThreadsFragment : Fragment() {
     // sync thread data from server ands cache
     //set observables for check chat connection state , update threads, logout state
     private fun setup() {
-        context?.showProgressBar()
+        mAdapter.mContext = activity
+        mAdapter.listener = object : AdapterCallBack {
+            override fun onItemClick(thread: Thread) {
+                navigateToHistory(thread)
+            }
+        }
+        if (isFirst) {
+            context?.showProgressBar()
+            isFirst = false
+        }
         mainViewModel = ViewModelProvider(this, ViewModelFactory())
             .get(MainViewModel::class.java)
 //        getThreadForLazy()
@@ -151,6 +161,12 @@ class ThreadsFragment : Fragment() {
     }
 
     var isLoadingg = false
+
+    fun navigateToHistory(thread: Thread) {
+        mainViewModel.selectThread(thread)
+        findNavController(this).navigate(R.id.action_threadsFragment_to_itemFragment)
+
+    }
 
     //prepare getThread request and send it to chat server for update threads
     //call backs in mainViewModel.threadsObservable

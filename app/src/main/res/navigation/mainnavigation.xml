@@ -19,5 +19,27 @@
         android:id="@+id/threadsFragment"
         android:name="fanap.pod.chat.boilerplateapp.ui.threads.ThreadsFragment"
         android:label="fragment_threads_item"
-        tools:layout="@layout/fragment_threads_item" />
+        tools:layout="@layout/fragment_threads_item" >
+        <action
+            android:id="@+id/action_threadsFragment_to_itemFragment"
+            app:destination="@id/itemFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@animator/nav_default_enter_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@animator/nav_default_pop_enter_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/itemFragment"
+        android:name="fanap.pod.chat.boilerplateapp.ui.history.ItemFragment"
+        android:label="history_item_list"
+        tools:layout="@layout/history_item_list" >
+        <action
+            android:id="@+id/history"
+            app:destination="@id/threadsFragment"
+            app:popUpTo="@id/threadsFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim"
+            app:popEnterAnim="@anim/nav_default_enter_anim"
+            app:popExitAnim="@animator/nav_default_enter_anim" />
+    </fragment>
 </navigation>

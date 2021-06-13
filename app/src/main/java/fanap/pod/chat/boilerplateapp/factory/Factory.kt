@@ -16,7 +16,7 @@ class Factory {
 
     fun getAppDataManager(): AppDataManager {
         if (dataManager == null)
-            dataManager = App.getInstance()?.applicationContext?.let { prepareAppChatHelper(it) }?.let {
+            dataManager = App.getInstance().applicationContext?.let { prepareAppChatHelper(it) }?.let {
                 AppDataManager(
                     prepareApiHelper(),
                     prepareAppPreferencesHelper(),
@@ -34,7 +34,7 @@ class Factory {
 
     private fun prepareAppPreferencesHelper(): AppPreferencesHelper {
         if (prefs == null)
-            prefs = App.getInstance()?.applicationContext?.let { AppPreferencesHelper(it,"mypref") }
+            prefs = App.getInstance().applicationContext?.let { AppPreferencesHelper(it,"mypref") }
         return prefs as AppPreferencesHelper
     }
 

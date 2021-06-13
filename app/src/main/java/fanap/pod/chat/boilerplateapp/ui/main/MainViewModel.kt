@@ -39,7 +39,13 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
     private val _loginState = MutableLiveData<Boolean>()
     val loginState: LiveData<Boolean> = _loginState
 
-    init {
+
+    //val selectedThreadState: PublishSubject<Thread> = PublishSubject.create()
+    private val _selectedThread = MutableLiveData<Thread>()
+    val selectedThread: LiveData<Thread> = _selectedThread
+    var t : Thread? = null
+
+   init {
         dataManager.addListener(this)
         mCompositeDisposable = CompositeDisposable()
         checkLogin()
@@ -49,6 +55,10 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
         listener = mListener
     }
 
+    fun selectThread(thread : Thread){
+        _selectedThread.value = thread
+        t = thread
+    }
 
     override fun connect(
         socketAddress: String,
