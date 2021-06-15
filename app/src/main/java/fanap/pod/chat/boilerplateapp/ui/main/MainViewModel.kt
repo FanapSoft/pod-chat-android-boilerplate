@@ -21,6 +21,7 @@ import rx.exceptions.OnErrorNotImplementedException
 import com.fanap.podchat.mainmodel.Thread
 import rx.subjects.PublishSubject
 
+
 class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
 
     // all logic app is in AppDataManager
@@ -43,19 +44,28 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
     //val selectedThreadState: PublishSubject<Thread> = PublishSubject.create()
     private val _selectedThread = MutableLiveData<Thread>()
     val selectedThread: LiveData<Thread> = _selectedThread
-    var t : Thread? = null
+    var t: Thread? = null
 
-   init {
+//    var navigate: PublishSubject<Boolean> = PublishSubject.create()
+
+
+    private val _navigate = MutableLiveData<Boolean>()
+    val navigate: LiveData<Boolean> = _navigate
+    init {
         dataManager.addListener(this)
         mCompositeDisposable = CompositeDisposable()
         checkLogin()
+    }
+
+    fun setNavigation(state : Boolean) {
+        _navigate.value = state
     }
 
     fun setViewModelListener(mListener: MainViewListener) {
         listener = mListener
     }
 
-    fun selectThread(thread : Thread){
+    fun selectThread(thread: Thread) {
         _selectedThread.value = thread
         t = thread
     }

@@ -1,9 +1,12 @@
 package fanap.pod.chat.boilerplateapp.ui.main
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentContainerView
@@ -58,7 +61,9 @@ class MainActivity : AppCompatActivity(), MainViewListener {
 
 
     private var TOKEN = "7d46feef96d8476d930e7ea749333dad"
+    private var isMain = true
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -66,10 +71,13 @@ class MainActivity : AppCompatActivity(), MainViewListener {
         setup()
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setup() {
         toolbar = binding.topToolbar
-        mainViewModel = ViewModelProvider(this, ViewModelFactory())
-            .get(MainViewModel::class.java)
+
+
+        mainViewModel = App.getInstance().getViewModel()
         mainViewModel.setViewModelListener(this)
         mainViewModel.loginState.observe(this@MainActivity, Observer {
             val loginState = it ?: return@Observer
@@ -96,9 +104,21 @@ class MainActivity : AppCompatActivity(), MainViewListener {
             }
 
         toolbar?.setNavigationOnClickListener {
-            Log.e("TAG", "setup: ")
+            if (!isMain) {
+                onBackPressed()
+            }
         }
 
+
+        mainViewModel.navigate.observe(this@MainActivity, Observer {
+            val isNavigate = it ?: return@Observer
+            isMain = isNavigate
+            if (!isMain) {
+                toolbar.setNavigationIcon(getDrawable(R.drawable.ic_baseline_arrow_back_24));
+            } else {
+                toolbar.setNavigationIcon(getDrawable(R.drawable.ic_baseline_menu_24));
+            }
+        })
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.itemLogout -> {
@@ -113,8 +133,6 @@ class MainActivity : AppCompatActivity(), MainViewListener {
             }
             true
         }
-
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

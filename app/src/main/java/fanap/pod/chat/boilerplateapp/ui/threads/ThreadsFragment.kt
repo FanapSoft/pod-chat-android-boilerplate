@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fanap.podchat.mainmodel.Thread
 import com.fanap.podchat.requestobject.RequestThread
+import fanap.pod.chat.boilerplateapp.App
 import fanap.pod.chat.boilerplateapp.R
 import fanap.pod.chat.boilerplateapp.factory.ViewModelFactory
 import fanap.pod.chat.boilerplateapp.ui.main.MainViewModel
@@ -116,8 +117,7 @@ class ThreadsFragment : Fragment() {
             context?.showProgressBar()
             isFirst = false
         }
-        mainViewModel = ViewModelProvider(this, ViewModelFactory())
-            .get(MainViewModel::class.java)
+        mainViewModel =  App.getInstance().getViewModel()
 //        getThreadForLazy()
         mainViewModel.observable
             .subscribeOn(Schedulers.io())
@@ -158,11 +158,15 @@ class ThreadsFragment : Fragment() {
 
                 }
             }
+
+
+
     }
 
     var isLoadingg = false
 
     fun navigateToHistory(thread: Thread) {
+        mainViewModel.setNavigation(false)
         mainViewModel.selectThread(thread)
         findNavController(this).navigate(R.id.action_threadsFragment_to_itemFragment)
 

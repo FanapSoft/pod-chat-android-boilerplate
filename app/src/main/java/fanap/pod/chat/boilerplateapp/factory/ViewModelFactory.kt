@@ -11,7 +11,7 @@ import fanap.pod.chat.boilerplateapp.ui.main.MainViewModel
  * Required given LoginViewModel has a non-empty constructor
  */
 class ViewModelFactory (): ViewModelProvider.Factory {
-
+    var viewModel : MainViewModel?= null
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         when(modelClass){
@@ -19,7 +19,9 @@ class ViewModelFactory (): ViewModelProvider.Factory {
                 return LoginViewModel() as T
             }
             MainViewModel::class.java->{
-                return MainViewModel() as T
+                if(viewModel == null)
+                    viewModel = MainViewModel()
+                return viewModel as T
             }
         }
 
