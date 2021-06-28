@@ -120,26 +120,10 @@ class LoginViewModel : ViewModel() {
             })
     }
 
-//    fun refreshToken(refreshToken: String) {
-//        mCompositeDisposable?.add(dataManager.refreshToken(refreshToken)
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(Schedulers.io())
-//            .subscribe({
-//                Log.e(mTAG, "handShake: ")
-//            }
-//            ) {
-//                Log.e(mTAG, "throwable: ")
-//            })
-//    }
-
     private fun saveAuthData(ssoRes: SSoTokenResult) {
         ssoRes.result?.refreshToken?.let { dataManager.saveRefreshToken(it) }
         dataManager.changeLoginState(true)
         _loginResult.value =
             LoginResult(success = true,message =  R.string.login_success,state = 1)
     }
-}
-
-private fun Boolean.getLongestString(): Boolean {
-return false
 }

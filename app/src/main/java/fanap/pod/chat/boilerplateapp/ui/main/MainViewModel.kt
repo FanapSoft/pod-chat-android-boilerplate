@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.fanap.podchat.chat.ChatHandler
+import com.fanap.podchat.mainmodel.Thread
 import com.fanap.podchat.model.ChatResponse
 import com.fanap.podchat.model.ErrorOutPut
 import com.fanap.podchat.model.ResultThreads
@@ -18,7 +20,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import rx.exceptions.MissingBackpressureException
 import rx.exceptions.OnErrorNotImplementedException
-import com.fanap.podchat.mainmodel.Thread
 import rx.subjects.PublishSubject
 
 
@@ -41,16 +42,16 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
     val loginState: LiveData<Boolean> = _loginState
 
 
-    //val selectedThreadState: PublishSubject<Thread> = PublishSubject.create()
+
     private val _selectedThread = MutableLiveData<Thread>()
     val selectedThread: LiveData<Thread> = _selectedThread
-    var t: Thread? = null
-
-//    var navigate: PublishSubject<Boolean> = PublishSubject.create()
-
 
     private val _navigate = MutableLiveData<Boolean>()
     val navigate: LiveData<Boolean> = _navigate
+
+    private val _needsGetThreadInMain = MutableLiveData<Boolean>()
+    val needsGetThreadInMain: LiveData<Boolean> = _needsGetThreadInMain
+
     init {
         dataManager.addListener(this)
         mCompositeDisposable = CompositeDisposable()
@@ -61,14 +62,19 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
         _navigate.value = state
     }
 
+
+    fun setGetThreadInMain(state : Boolean) {
+        _needsGetThreadInMain.value = state
+    }
+
     fun setViewModelListener(mListener: MainViewListener) {
         listener = mListener
     }
 
     fun selectThread(thread: Thread) {
         _selectedThread.value = thread
-        t = thread
     }
+
 
     override fun connect(
         socketAddress: String,
@@ -94,8 +100,8 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
         dataManager.connectChat(rb)
     }
 
-    override fun getThread(requestThread: RequestThread) {
-        dataManager.getThread(requestThread)
+    override fun getThread(requestThread: RequestThread , listener : ChatHandler?) {
+        dataManager.getThread(requestThread,listener)
     }
 
     //when user leaved the app.
@@ -145,10 +151,15 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
     var lastId: Long = -1
     override fun onGetThread(content: String?, thread: ChatResponse<ResultThreads>?) {
         super.onGetThread(content, thread)
-        if (lastId != thread?.result?.threads?.get(0)?.id) {
+        if (thread?.result?.threads!!.size == 0 && thread?.result?.contentCount != 0L)
+            threadsObservable.onNext(thread?.result?.threads)
+        else if (lastId != thread?.result?.threads?.get(0)?.id) {
             lastId = thread?.result?.threads?.get(0)?.id!!
             threadsObservable.onNext(thread?.result?.threads)
+        } else{
+            threadsObservable.onNext(emptyList())
         }
+
     }
 
     override fun onError(content: String?, error: ErrorOutPut?) {

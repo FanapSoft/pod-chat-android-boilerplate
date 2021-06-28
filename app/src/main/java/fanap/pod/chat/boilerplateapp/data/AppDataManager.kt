@@ -1,5 +1,6 @@
 package fanap.pod.chat.boilerplateapp.data
 
+import com.fanap.podchat.chat.ChatHandler
 import com.fanap.podchat.requestobject.RequestConnect
 import com.fanap.podchat.requestobject.RequestThread
 import fanap.pod.chat.boilerplateapp.data.chat.AppChatHelper
@@ -70,8 +71,8 @@ class AppDataManager(
         chatHelper.connectChat(request)
     }
 
-    override fun getThread(requestThread: RequestThread) {
-        chatHelper.getThread(requestThread)
+    override fun getThread(requestThread: RequestThread,listener : ChatHandler?) {
+        chatHelper.getThread(requestThread,listener)
     }
 
     override fun clearCache() {

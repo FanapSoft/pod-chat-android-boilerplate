@@ -1,5 +1,6 @@
 package fanap.pod.chat.boilerplateapp.ui.main
 
+import com.fanap.podchat.chat.ChatHandler
 import com.fanap.podchat.chat.ChatListener
 import com.fanap.podchat.requestobject.RequestConnect
 import com.fanap.podchat.requestobject.RequestThread
@@ -19,7 +20,7 @@ interface ViewModelAdapter{
                  fileServer: String,
                  podSpaceUrl: String,
                  typeCode: String?)
-    fun getThread(requestThread: RequestThread)
+    fun getThread(requestThread: RequestThread, listener : ChatHandler?)
     fun checkRefreshToken()
     fun close()
     fun checkLogin()

@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +18,6 @@ import com.fanap.podchat.mainmodel.Thread
 import com.fanap.podchat.requestobject.RequestThread
 import fanap.pod.chat.boilerplateapp.App
 import fanap.pod.chat.boilerplateapp.R
-import fanap.pod.chat.boilerplateapp.factory.ViewModelFactory
 import fanap.pod.chat.boilerplateapp.ui.main.MainViewModel
 import fanap.pod.chat.boilerplateapp.utils.Utility
 import fanap.pod.chat.boilerplateapp.utils.Utility.showProgressBar
@@ -37,9 +36,6 @@ class ThreadsFragment : Fragment() {
     private lateinit var nested: NestedScrollView
     private lateinit var mainViewModel: MainViewModel
 
-
-    //pagination configs
-    private var isLoading = false
     private var offset: Long = 0
     private var count: Long = 10
 
@@ -50,7 +46,7 @@ class ThreadsFragment : Fragment() {
 
     //state of chat connection
     private var chatReady: Boolean = false
-    private var isFirst = true
+    private var needsUpdate = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -84,13 +80,13 @@ class ThreadsFragment : Fragment() {
         val totalItemCount = mLayoutManager.itemCount
         val pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition()
 
-        if (!isLoading) {
-            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+            if (!isEnd)
                 offset += 10
-                handler.sendMessage(Message())
-                Log.e("TAG", "checkLoadMore: ")
-            }
+            handler.sendMessage(Message())
+            Log.e("TAG", "checkLoadMore: ")
         }
+
     }
 
     private val handler = object : Handler(Looper.getMainLooper()) {
@@ -113,22 +109,26 @@ class ThreadsFragment : Fragment() {
                 navigateToHistory(thread)
             }
         }
-        if (isFirst) {
-            context?.showProgressBar()
-            isFirst = false
-        }
+
         mainViewModel =  App.getInstance().getViewModel()
-//        getThreadForLazy()
+
         mainViewModel.observable
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError { Log.d("CHAT_TEST_UI", "UI ERROR") }
             .subscribe {
-                if (it == "CHAT_READY") {
-                    chatReady = true
-                    getThread()
+                chatReady = it == "CHAT_READY"
+                if (isLoading) {
+                    isLoading = false
+                    Utility.hideProgressBar()
+                    return@subscribe
+                }
+                if (needsUpdate && chatReady) {
+                    getThreadAfterLogin()
+                    mainViewModel.setGetThreadInMain(false)
                 }
             }
+
         mainViewModel.logoutObservable
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -138,15 +138,20 @@ class ThreadsFragment : Fragment() {
                     mAdapter.clearList()
                 }
             }
+
         mainViewModel.threadsObservable
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError { Log.d("CHAT_TEST_UI", "UI ERROR") }
             .subscribe {
-                Utility.hideProgressBar()
-                if (it.isNotEmpty() && isLoadingg) {
-                    isLoadingg = false
-                    Log.e("testtag", "add item in adapter")
+
+                if (isLoading) {
+                    isLoading = false
+                    if (it.isEmpty()) {
+                        Utility.hideProgressBar()
+                        return@subscribe
+                    }
+                    isEnd = it.size == 0
                     mAdapter.updateList(it as MutableList<Thread>)
                     Handler(Looper.getMainLooper()).post {
                         mAdapter.notifyItemRangeInserted(
@@ -154,16 +159,28 @@ class ThreadsFragment : Fragment() {
                             mAdapter.itemCount - 1
                         )
                     }
-
-
                 }
+                Utility.hideProgressBar()
             }
 
+        mainViewModel.loginState.observe(viewLifecycleOwner, Observer {
+            var loginState = it ?: return@Observer
+            if (loginState && !needsUpdate)
+                getThread()
 
+        })
+
+
+        mainViewModel.needsGetThreadInMain.observe(viewLifecycleOwner, Observer {
+            needsUpdate = it ?: return@Observer
+        })
 
     }
 
-    var isLoadingg = false
+
+    //    var isMainLoading = false
+    var isLoading = false
+    var isEnd = false
 
     fun navigateToHistory(thread: Thread) {
         mainViewModel.setNavigation(false)
@@ -175,18 +192,32 @@ class ThreadsFragment : Fragment() {
     //prepare getThread request and send it to chat server for update threads
     //call backs in mainViewModel.threadsObservable
     private fun getThread() {
-//        addTread()
-        if (!isLoadingg) {
-            isLoadingg = true
+        if (!isLoading) {
+            context?.showProgressBar()
+            isLoading = true
             val requestThread = RequestThread
                 .Builder()
                 .offset(offset)
                 .count(count)
                 .build()
-            mainViewModel.getThread(requestThread)
+            mainViewModel.getThread(requestThread, null)
             Log.e("TAG", offset.toString() + " ")
         }
     }
 
+    //prepare getThread request and send it to chat server for update threads
+    //call backs in mainViewModel.threadsObservable
+    private fun getThreadAfterLogin() {
+        if (!isLoading) {
+            isLoading = true
+            val requestThread = RequestThread
+                .Builder()
+                .offset(offset)
+                .count(count)
+                .build()
+            mainViewModel.getThread(requestThread, null)
+            Log.e("TAG", offset.toString() + " ")
+        }
+    }
 }
 

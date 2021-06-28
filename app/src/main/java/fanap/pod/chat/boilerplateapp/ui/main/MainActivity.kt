@@ -6,18 +6,23 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.FragmentContainerView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import com.fanap.podchat.chat.ChatHandler
+import com.fanap.podchat.model.ChatResponse
+import com.fanap.podchat.model.ResultThreads
 import com.fanap.podchat.requestobject.RequestThread
 import fanap.pod.chat.boilerplateapp.App
 import fanap.pod.chat.boilerplateapp.R
 import fanap.pod.chat.boilerplateapp.databinding.ActivityMainBinding
-import fanap.pod.chat.boilerplateapp.factory.ViewModelFactory
 import fanap.pod.chat.boilerplateapp.ui.login.LoginActivity
+import fanap.pod.chat.boilerplateapp.utils.Utility
+import fanap.pod.chat.boilerplateapp.utils.Utility.showProgressBar
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
@@ -27,13 +32,14 @@ class MainActivity : AppCompatActivity(), MainViewListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mainViewModel: MainViewModel
     private lateinit var toolbar: Toolbar
+    private lateinit var customToolbar: ConstraintLayout
+    private lateinit var customTitle: TextView
     private var mainServer = true
     private var chatReady: Boolean = false
     private val ssoHost = App.getInstance().getString(R.string.sandbox_ssoHost)
     private val serverName = "chat-server"
     private val sand_appId = "POD-Chat"
     private val typeCode: String? = "default"
-
 
     /**
      *
@@ -75,7 +81,8 @@ class MainActivity : AppCompatActivity(), MainViewListener {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setup() {
         toolbar = binding.topToolbar
-
+        customToolbar = binding.customToolbar
+        customTitle = binding.toolbarTitle
 
         mainViewModel = App.getInstance().getViewModel()
         mainViewModel.setViewModelListener(this)
@@ -95,30 +102,34 @@ class MainActivity : AppCompatActivity(), MainViewListener {
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError { Log.d("CHAT_TEST_UI", "UI ERROR") }
             .subscribe {
-                if (it == "CHAT_READY") {
-                    chatReady = true
-                    toolbar.setTitle("connected")
-                } else {
-                    toolbar.setTitle("connecting ...")
-                }
+                chatReady = it == "CHAT_READY"
+                updateView()
             }
 
         toolbar?.setNavigationOnClickListener {
             if (!isMain) {
                 onBackPressed()
             }
+
         }
 
+        mainViewModel.selectedThread.observe(this, Observer {
+            val mThread = it ?: return@Observer
+            customTitle.setText(mThread.title)
+        })
 
         mainViewModel.navigate.observe(this@MainActivity, Observer {
             val isNavigate = it ?: return@Observer
             isMain = isNavigate
             if (!isMain) {
+                customToolbar.visibility = View.VISIBLE
                 toolbar.setNavigationIcon(getDrawable(R.drawable.ic_baseline_arrow_back_24));
             } else {
+                customToolbar.visibility = View.GONE
                 toolbar.setNavigationIcon(getDrawable(R.drawable.ic_baseline_menu_24));
             }
         })
+
         toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.itemLogout -> {
@@ -135,13 +146,24 @@ class MainActivity : AppCompatActivity(), MainViewListener {
         }
     }
 
+    fun updateView() {
+        if (chatReady) {
+            toolbar.setTitle("Podchat")
+        } else {
+            toolbar.setTitle("Waiting for ...")
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == LAUNCH_LOGIN_ACTIVITY)
             if (resultCode == Activity.RESULT_CANCELED)
                 finish()
-            else
+            else {
+                this.showProgressBar()
+                mainViewModel.setGetThreadInMain(true)
                 mainViewModel.checkRefreshToken()
+            }
 
     }
 

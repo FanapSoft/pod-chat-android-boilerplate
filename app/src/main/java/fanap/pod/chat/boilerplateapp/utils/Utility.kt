@@ -1,6 +1,7 @@
 package fanap.pod.chat.boilerplateapp.utils
 
-import android.R
+
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
@@ -12,7 +13,9 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import fanap.pod.chat.boilerplateapp.R
 
+@SuppressLint("StaticFieldLeak")
 object Utility {
 
     private var progressBar: ProgressBar? = null
@@ -60,7 +63,8 @@ object Utility {
         try {
                 val layout = (this as? Activity)?.findViewById<View>(android.R.id.content)?.rootView as? ViewGroup
 
-                progressBar = ProgressBar(this, null, R.attr.progressBarStyleLarge)
+//                progressBar = ProgressBar(this, null)progressBarStyleLarge
+            progressBar = ProgressBar(this, null, R.attr.progressBarStyleLarge)
                 progressBar?.let { it1 ->
                     it1.isIndeterminate = true
 

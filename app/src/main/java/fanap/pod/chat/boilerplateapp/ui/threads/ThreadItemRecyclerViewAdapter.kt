@@ -69,11 +69,9 @@ class ThreadItemRecyclerViewAdapter(
                 .error(R.drawable.app_icon)
                 .into(holder.imageProfile)
         }
-
-        holder.contentView.setOnClickListener {
+        holder.itemView.setOnClickListener {
             listener!!.onItemClick(item)
         }
-
     }
 
     override fun getItemCount(): Int = values.size

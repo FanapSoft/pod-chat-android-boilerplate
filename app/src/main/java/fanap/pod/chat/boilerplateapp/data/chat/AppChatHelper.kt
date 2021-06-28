@@ -4,6 +4,7 @@ package fanap.pod.chat.boilerplateapp.data.chat
 import android.util.Log
 import com.fanap.podchat.chat.Chat
 import com.fanap.podchat.chat.ChatAdapter
+import com.fanap.podchat.chat.ChatHandler
 import com.fanap.podchat.chat.thread.public_thread.ResultJoinPublicThread
 import com.fanap.podchat.model.*
 import com.fanap.podchat.requestobject.RequestConnect
@@ -45,8 +46,8 @@ class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter(),Chat.IClearMessage
         chat.connect(request)
     }
 
-    override fun getThread(requestThread: RequestThread) {
-        chat.getThreads(requestThread,null)
+    override fun getThread(requestThread: RequestThread, listener : ChatHandler?) {
+        chat.getThreads(requestThread,listener)
     }
 
     override fun clearCache() {

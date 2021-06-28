@@ -26,7 +26,13 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@animator/nav_default_enter_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@animator/nav_default_pop_enter_anim" />
+            app:popExitAnim="@animator/nav_default_pop_enter_anim" >
+
+            <argument
+                android:name="myArg"
+                app:argType="integer"
+                android:defaultValue="1" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/itemFragment"

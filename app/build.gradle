@@ -4,7 +4,7 @@ plugins {
 }
 
 ext {
-    chatSdkVersion = "0.9.7.4"
+    chatSdkVersion = "0.9.9.1"
 }
 
 android {
