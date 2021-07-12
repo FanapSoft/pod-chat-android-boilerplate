@@ -74,7 +74,6 @@ class LoginViewModel : ViewModel() {
                         number = phoneNumber
                         login()
                     }
-                    Log.e(mTAG, "handShake: ")
                 }
                 ) {
                     Log.e(mTAG, "throwable: ")

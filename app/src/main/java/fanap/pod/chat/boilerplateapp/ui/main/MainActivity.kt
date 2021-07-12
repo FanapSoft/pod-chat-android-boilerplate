@@ -7,6 +7,8 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +18,7 @@ import androidx.lifecycle.Observer
 import com.fanap.podchat.chat.ChatHandler
 import com.fanap.podchat.model.ChatResponse
 import com.fanap.podchat.model.ResultThreads
+import com.fanap.podchat.requestobject.RequestGetHistory
 import com.fanap.podchat.requestobject.RequestThread
 import fanap.pod.chat.boilerplateapp.App
 import fanap.pod.chat.boilerplateapp.R
@@ -75,6 +78,15 @@ class MainActivity : AppCompatActivity(), MainViewListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setup()
+//        val crashButton = Button(this)
+//        crashButton.text = "Crash!"
+//        crashButton.setOnClickListener {
+//            throw RuntimeException("Test Crash") // Force a crash
+//        }
+//
+//        addContentView(crashButton, ViewGroup.LayoutParams(
+//            ViewGroup.LayoutParams.MATCH_PARENT,
+//            ViewGroup.LayoutParams.WRAP_CONTENT))
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -136,15 +148,17 @@ class MainActivity : AppCompatActivity(), MainViewListener {
                     mainViewModel.logOut()
                 }
                 R.id.itemSandBoxServer -> {
-                    Log.e("TAG", "itemSandBoxServer: ")
+
                 }
                 R.id.itemMainServer -> {
-                    Log.e("TAG", "itemMainServer: ")
+
                 }
             }
             true
         }
     }
+
+
 
     fun updateView() {
         if (chatReady) {

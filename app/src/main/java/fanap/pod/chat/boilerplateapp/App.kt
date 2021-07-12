@@ -3,9 +3,11 @@ package fanap.pod.chat.boilerplateapp
 import android.annotation.SuppressLint
 import android.content.Context
 import android.provider.Settings
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
+import com.fanap.podchat.mainmodel.UserInfo
 import fanap.pod.chat.boilerplateapp.factory.Factory
 import fanap.pod.chat.boilerplateapp.factory.ViewModelFactory
 import fanap.pod.chat.boilerplateapp.ui.main.MainViewModel
@@ -16,6 +18,7 @@ class App : MultiDexApplication() {
         var factory: Factory = Factory()
         private lateinit var  instance: App
         var deviceId :String? = null
+        var user: UserInfo? = null
         fun getInstance(): App {
             return instance
         }

@@ -12,7 +12,6 @@ import com.fanap.podchat.mainmodel.Thread
 import com.squareup.picasso.Picasso
 import fanap.pod.chat.boilerplateapp.R
 import fanap.pod.chat.boilerplateapp.databinding.FragmentThreadsBinding
-import java.lang.Exception as Exception1
 
 
 /**
@@ -38,12 +37,19 @@ class ThreadItemRecyclerViewAdapter(
 
     }
 
-    var mContext: Context? = null
     fun updateList(values: MutableList<Thread>) {
         this.values.addAll(values)
-//        notifyDataSetChanged()
-//        notifyItemInserted(this.values.size)
+    }
 
+    fun updateItem(thread: Thread) {
+        val itemcount = this.values.size
+        this.values.remove(thread)
+        this.values.add(0, thread)
+
+        if (itemcount != this.values.size) {
+            listener?.onAddNew(thread)
+        }
+            notifyDataSetChanged()
     }
 
     fun clearList() {
@@ -91,5 +97,6 @@ class ThreadItemRecyclerViewAdapter(
 
 interface AdapterCallBack {
     fun onItemClick(thread: Thread)
+    fun onAddNew(thread: Thread)
 }
 

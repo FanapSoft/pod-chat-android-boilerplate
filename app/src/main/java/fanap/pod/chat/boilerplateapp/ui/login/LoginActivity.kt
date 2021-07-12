@@ -4,7 +4,6 @@ import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.*
@@ -109,7 +108,7 @@ class LoginActivity : AppCompatActivity() {
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
-                      context.showProgressBar()
+                        showProgressBar()
                         loginViewModel.verifyNumber(
                             editTextVerify.text.toString()
                         )
@@ -119,20 +118,21 @@ class LoginActivity : AppCompatActivity() {
             }
 
             login.setOnClickListener {
-                context.showProgressBar()
+                showProgressBar()
                 loginViewModel.handshake(
                     editTextPhone.text.toString()
                 )
             }
 
             verify.setOnClickListener {
-                context.showProgressBar()
+                showProgressBar()
                 loginViewModel.verifyNumber(
                     editTextVerify.text.toString()
                 )
             }
         }
     }
+
 
     private fun setLoginMode(state: Boolean) {
         login.isEnabled = state

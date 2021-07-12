@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/itemFragment"
-        android:name="fanap.pod.chat.boilerplateapp.ui.history.ItemFragment"
+        android:name="fanap.pod.chat.boilerplateapp.ui.history.HistoryFragment"
         android:label="history_item_list"
         tools:layout="@layout/history_item_list" >
         <action

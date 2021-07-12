@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.net.ConnectivityManager
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,6 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
-import fanap.pod.chat.boilerplateapp.R
 
 @SuppressLint("StaticFieldLeak")
 object Utility {
@@ -63,8 +63,7 @@ object Utility {
         try {
                 val layout = (this as? Activity)?.findViewById<View>(android.R.id.content)?.rootView as? ViewGroup
 
-//                progressBar = ProgressBar(this, null)progressBarStyleLarge
-            progressBar = ProgressBar(this, null, R.attr.progressBarStyleLarge)
+                progressBar = ProgressBar(this, null)
                 progressBar?.let { it1 ->
                     it1.isIndeterminate = true
 
@@ -94,7 +93,7 @@ object Utility {
                 it.visibility = View.GONE
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("TAG", "hideProgressBar: ${e.message}")
         }
     }
 

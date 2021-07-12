@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="80dp"
         android:layout_marginEnd="8dp"
         android:orientation="vertical"
         android:paddingTop="16dp"
@@ -27,6 +27,8 @@
             android:height="0dp"
             android:gravity="right|top"
             android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="14sp"
+            android:textStyle="bold"
             tools:text="سید احمد سجادی" />
 
         <TextView
@@ -37,6 +39,7 @@
             android:height="0dp"
             android:gravity="right|top"
             android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="12sp"
             tools:text="سلام خوبی کجیی کی میایی" />
     </LinearLayout>
 

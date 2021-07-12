@@ -2,6 +2,8 @@ package fanap.pod.chat.boilerplateapp.data
 
 import com.fanap.podchat.chat.ChatHandler
 import com.fanap.podchat.requestobject.RequestConnect
+import com.fanap.podchat.requestobject.RequestGetHistory
+import com.fanap.podchat.requestobject.RequestMessage
 import com.fanap.podchat.requestobject.RequestThread
 import fanap.pod.chat.boilerplateapp.data.chat.AppChatHelper
 import fanap.pod.chat.boilerplateapp.data.chat.ChatCallBackHelper
@@ -67,13 +69,34 @@ class AppDataManager(
         return api.refreshToken(refreshToken)
     }
 
-    override fun connectChat(request : RequestConnect) {
+    override fun connectChat(request: RequestConnect) {
         chatHelper.connectChat(request)
     }
 
-    override fun getThread(requestThread: RequestThread,listener : ChatHandler?) {
-        chatHelper.getThread(requestThread,listener)
+    override fun getThread(requestThread: RequestThread, listener: ChatHandler?): String {
+        return chatHelper.getThread(requestThread, listener)
     }
+
+    override fun getThreadHistory(
+        requestGetHistory: RequestGetHistory,
+        listener: ChatHandler?
+    ): String {
+        return chatHelper.getThreadHistory(requestGetHistory, listener)
+    }
+
+    override fun getUserInfo(listener: ChatHandler?): String {
+        return chatHelper.getUserInfo(listener)
+    }
+
+    override fun sendTextMessage(
+        requestTextMessage: RequestMessage,
+        listener: ChatHandler?
+    ): String {
+        return chatHelper.sendTextMessage(
+            requestTextMessage, listener
+        )
+    }
+
 
     override fun clearCache() {
         chatHelper.clearCache()

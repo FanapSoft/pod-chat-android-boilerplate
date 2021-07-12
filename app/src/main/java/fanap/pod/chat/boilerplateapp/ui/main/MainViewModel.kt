@@ -5,11 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.fanap.podchat.chat.ChatHandler
+import com.fanap.podchat.mainmodel.MessageVO
 import com.fanap.podchat.mainmodel.Thread
-import com.fanap.podchat.model.ChatResponse
-import com.fanap.podchat.model.ErrorOutPut
-import com.fanap.podchat.model.ResultThreads
+import com.fanap.podchat.model.*
 import com.fanap.podchat.requestobject.RequestConnect
+import com.fanap.podchat.requestobject.RequestGetHistory
+import com.fanap.podchat.requestobject.RequestMessage
 import com.fanap.podchat.requestobject.RequestThread
 import com.fanap.podchat.util.ChatStateType
 import fanap.pod.chat.boilerplateapp.App
@@ -31,6 +32,12 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
     private var mCompositeDisposable: CompositeDisposable? = null
     private var chatState: String? = ""
     var threadsObservable: PublishSubject<List<Thread>> = PublishSubject.create()
+    var threadUpdatedObservable: PublishSubject<Thread> = PublishSubject.create()
+
+
+    var threadHistoryObservable: PublishSubject<MutableList<MessageVO>> = PublishSubject.create()
+    var newMessageObservable: PublishSubject<MessageVO> = PublishSubject.create()
+
     var observable: PublishSubject<String> = PublishSubject.create()
 
     /*
@@ -42,23 +49,28 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
     val loginState: LiveData<Boolean> = _loginState
 
 
-
     private val _selectedThread = MutableLiveData<Thread>()
     val selectedThread: LiveData<Thread> = _selectedThread
 
     private val _navigate = MutableLiveData<Boolean>()
     val navigate: LiveData<Boolean> = _navigate
 
+    //    private val _errorMessage = MutableLiveData<String?>()
+//    val errorMessage: LiveData<String?> = _errorMessage
+    var errorMessageObservable: PublishSubject<String> = PublishSubject.create()
+
     private val _needsGetThreadInMain = MutableLiveData<Boolean>()
     val needsGetThreadInMain: LiveData<Boolean> = _needsGetThreadInMain
 
+    var historyInCache: MutableList<MessageVO> = mutableListOf()
+   var lastMessageVOInCach : MessageVO? = null
     init {
         dataManager.addListener(this)
         mCompositeDisposable = CompositeDisposable()
         checkLogin()
     }
 
-    fun setNavigation(state : Boolean) {
+    fun setNavigation(state: Boolean) {
         _navigate.value = state
     }
 
@@ -100,8 +112,28 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
         dataManager.connectChat(rb)
     }
 
-    override fun getThread(requestThread: RequestThread , listener : ChatHandler?) {
-        dataManager.getThread(requestThread,listener)
+    override fun getThread(requestThread: RequestThread, listener: ChatHandler?): String {
+        return dataManager.getThread(requestThread, listener)
+    }
+
+    override fun getThreadHistory(
+        requestGetHistory: RequestGetHistory,
+        listener: ChatHandler?
+    ): String {
+        lastMessageVOInCach==null
+        historyInCache.clear()
+        return dataManager.getThreadHistory(requestGetHistory, listener)
+    }
+
+    override fun getUserInfo(listener: ChatHandler?): String {
+        return dataManager.getUserInfo(listener)
+    }
+
+    override fun sendTextMessage(
+        requestTextMessage: RequestMessage,
+        listener: ChatHandler?
+    ): String {
+        return dataManager.sendTextMessage(requestTextMessage,listener)
     }
 
     //when user leaved the app.
@@ -115,6 +147,7 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
     override fun checkLogin() {
         if (dataManager.getLoginState()) {
             setLogin(true)
+            getUserInfo(null)
         } else
             setLogin(false)
     }
@@ -127,6 +160,14 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
             setLogin(false)
     }
 
+    override fun onNewMessage(content: String?, response: ChatResponse<ResultNewMessage>?) {
+        super.onNewMessage(content, response)
+        Log.e("onNewMessage", "onNewMessage: ${response?.result?.messageVO?.message}" )
+        if(lastMessageVOInCach==null || response?.result?.messageVO?.uniqueId != lastMessageVOInCach?.uniqueId) {
+            lastMessageVOInCach = response?.result?.messageVO
+            newMessageObservable.onNext(response?.result?.messageVO)
+        }
+    }
 
     //this method observe to changes in chat state
     //and then send state to view
@@ -149,6 +190,7 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
     }
 
     var lastId: Long = -1
+    var lastMsg: Long = -1
     override fun onGetThread(content: String?, thread: ChatResponse<ResultThreads>?) {
         super.onGetThread(content, thread)
         if (thread?.result?.threads!!.size == 0 && thread?.result?.contentCount != 0L)
@@ -156,18 +198,45 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
         else if (lastId != thread?.result?.threads?.get(0)?.id) {
             lastId = thread?.result?.threads?.get(0)?.id!!
             threadsObservable.onNext(thread?.result?.threads)
-        } else{
+        } else {
             threadsObservable.onNext(emptyList())
         }
 
     }
 
+    override fun onGetHistory(content: String?, history: ChatResponse<ResultHistory>?) {
+        super.onGetHistory(content, history)
+        if (history?.result?.history?.isEmpty() == true) {
+            threadHistoryObservable.onNext(mutableListOf())
+            return
+        }
+        if (historyInCache.isEmpty() || (history?.result?.history?.containsAll(historyInCache) == false && !historyInCache.containsAll(
+                history.result.history!!
+            ))
+        ) {
+            historyInCache.addAll(history?.result?.history!!)
+            threadHistoryObservable.onNext(historyInCache)
+        }
+    }
+
+    override fun onUserInfo(content: String?, response: ChatResponse<ResultUserInfo>?) {
+        super.onUserInfo(content, response)
+
+        App.user = response?.result?.user
+    }
+
+    override fun onThreadInfoUpdated(content: String?, response: ChatResponse<ResultThread>?) {
+        super.onThreadInfoUpdated(content, response)
+        threadUpdatedObservable.onNext(response?.result?.thread)
+    }
+
     override fun onError(content: String?, error: ErrorOutPut?) {
         super.onError(content, error)
-        Log.e("TAG", "onError: " + error?.errorCode)
+        Log.e("TAG", "onError: ${error?.errorCode}  mmmmmmmmm   : ${error?.errorMessage}")
         if (error!!.errorCode == 21L) {
             checkRefreshToken()
         }
+        errorMessageObservable.onNext(error.uniqueId)
     }
 
 
