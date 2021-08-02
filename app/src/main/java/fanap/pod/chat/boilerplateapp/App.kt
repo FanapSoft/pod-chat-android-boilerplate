@@ -19,6 +19,7 @@ class App : MultiDexApplication() {
         private lateinit var  instance: App
         var deviceId :String? = null
         var user: UserInfo? = null
+
         fun getInstance(): App {
             return instance
         }
