@@ -1,5 +1,6 @@
 package fanap.pod.chat.boilerplateapp.ui.threads
 
+import android.annotation.SuppressLint
 import android.icu.util.TimeUnit
 import android.os.Bundle
 import android.os.Handler
@@ -12,7 +13,7 @@ import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,8 +24,8 @@ import fanap.pod.chat.boilerplateapp.R
 import fanap.pod.chat.boilerplateapp.ui.main.MainViewModel
 import fanap.pod.chat.boilerplateapp.utils.Utility
 import fanap.pod.chat.boilerplateapp.utils.Utility.showProgressBar
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 /**
@@ -109,6 +110,7 @@ class ThreadsFragment : Fragment() {
     // prepare view model and get thread data for lazy loading
     // sync thread data from server ands cache
     //set observables for check chat connection state , update threads, logout state
+    @SuppressLint("CheckResult")
     private fun setup() {
 
         mAdapter.listener = object : AdapterCallBack {

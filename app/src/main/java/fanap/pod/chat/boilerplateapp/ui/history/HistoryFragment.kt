@@ -1,5 +1,6 @@
 package fanap.pod.chat.boilerplateapp.ui.history
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -27,8 +28,9 @@ import fanap.pod.chat.boilerplateapp.R
 import fanap.pod.chat.boilerplateapp.ui.main.MainViewModel
 import fanap.pod.chat.boilerplateapp.utils.Utility
 import fanap.pod.chat.boilerplateapp.utils.Utility.showProgressBar
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+
 
 /**
  * A fragment representing a list of Items.
@@ -107,6 +109,7 @@ class HistoryFragment : Fragment() {
     }
 
     var first = false
+    @SuppressLint("CheckResult")
     private fun setup() {
         mainViewModel = App.getInstance().getViewModel()
         mainViewModel.lastMsg = -1
@@ -133,7 +136,6 @@ class HistoryFragment : Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError { Log.d("CHAT_TEST_UI", "UI ERROR") }
             .subscribe {
-
                 if (isLoading) {
                     isLoading = false
                     if (it.isEmpty()) {

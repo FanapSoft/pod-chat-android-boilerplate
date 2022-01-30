@@ -24,10 +24,9 @@ import fanap.pod.chat.boilerplateapp.App
 import fanap.pod.chat.boilerplateapp.R
 import fanap.pod.chat.boilerplateapp.databinding.ActivityMainBinding
 import fanap.pod.chat.boilerplateapp.ui.login.LoginActivity
-import fanap.pod.chat.boilerplateapp.utils.Utility
 import fanap.pod.chat.boilerplateapp.utils.Utility.showProgressBar
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
 class MainActivity : AppCompatActivity(), MainViewListener {

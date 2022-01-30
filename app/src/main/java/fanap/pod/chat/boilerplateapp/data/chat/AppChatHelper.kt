@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.util.Log
 import com.fanap.podchat.chat.Chat
 import com.fanap.podchat.chat.ChatAdapter
+import com.fanap.podchat.chat.ChatCore
 import com.fanap.podchat.chat.ChatHandler
 import com.fanap.podchat.chat.thread.public_thread.ResultJoinPublicThread
 import com.fanap.podchat.model.*
@@ -17,7 +18,7 @@ import com.fanap.podchat.util.NetworkUtils.NetworkPingSender
 import fanap.pod.chat.boilerplateapp.R
 
 
-class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter(),Chat.IClearMessageCache {
+class AppChatHelper(val chat: Chat):ChatHelper, ChatAdapter(), ChatCore.IClearMessageCache {
 
     init {
         val networkStateConfig = NetworkPingSender.NetworkStateConfig()

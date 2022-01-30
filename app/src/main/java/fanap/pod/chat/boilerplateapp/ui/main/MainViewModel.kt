@@ -18,10 +18,10 @@ import fanap.pod.chat.boilerplateapp.data.AppDataManager
 import fanap.pod.chat.boilerplateapp.data.chat.ChatCallBackHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.exceptions.MissingBackpressureException
+import io.reactivex.exceptions.OnErrorNotImplementedException
 import io.reactivex.schedulers.Schedulers
-import rx.exceptions.MissingBackpressureException
-import rx.exceptions.OnErrorNotImplementedException
-import rx.subjects.PublishSubject
+import io.reactivex.subjects.PublishSubject
 
 
 class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
@@ -165,7 +165,7 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
         Log.e("onNewMessage", "onNewMessage: ${response?.result?.messageVO?.message}" )
         if(lastMessageVOInCach==null || response?.result?.messageVO?.uniqueId != lastMessageVOInCach?.uniqueId) {
             lastMessageVOInCach = response?.result?.messageVO
-            newMessageObservable.onNext(response?.result?.messageVO)
+            response?.result?.messageVO?.let { newMessageObservable.onNext(it) }
         }
     }
 
@@ -175,7 +175,7 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
         super.onChatState(state)
 
         try {
-            observable.onNext(state)
+            state?.let { observable.onNext(it) }
             chatState = state
         } catch (e: Exception) {
             observable.onError(e)
@@ -194,10 +194,10 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
     override fun onGetThread(content: String?, thread: ChatResponse<ResultThreads>?) {
         super.onGetThread(content, thread)
         if (thread?.result?.threads!!.size == 0 && thread?.result?.contentCount != 0L)
-            threadsObservable.onNext(thread?.result?.threads)
+            threadsObservable.onNext(thread?.result?.threads!!)
         else if (lastId != thread?.result?.threads?.get(0)?.id) {
             lastId = thread?.result?.threads?.get(0)?.id!!
-            threadsObservable.onNext(thread?.result?.threads)
+            threadsObservable.onNext(thread?.result?.threads!!)
         } else {
             threadsObservable.onNext(emptyList())
         }
@@ -227,7 +227,7 @@ class MainViewModel : ChatCallBackHelper, ViewModelAdapter, ViewModel() {
 
     override fun onThreadInfoUpdated(content: String?, response: ChatResponse<ResultThread>?) {
         super.onThreadInfoUpdated(content, response)
-        threadUpdatedObservable.onNext(response?.result?.thread)
+        response?.result?.thread?.let { threadUpdatedObservable.onNext(it) }
     }
 
     override fun onError(content: String?, error: ErrorOutPut?) {
